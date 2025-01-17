@@ -1,0 +1,33 @@
+CREATE TABLE `tasks` (
+    Id         INTEGER PRIMARY KEY,
+    Title      varchar(255) NOT NULL, `Description` text, 
+    Created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+    Due_Date   TEXT NOT NULL, 
+    Status     varchar(255) 
+    )
+
+    INSERT INTO tasks(Title, Description, Due_Date, Status) VALUES
+    ('Task111', 'This is Task111', '2025-01-28T15:36:56.200', "pending"),
+    ('Task112', 'This is Task112', '2025-01-28T15:36:56.200', "pending"),
+    ('Task113', 'This is Task113', '2025-01-28T15:36:56.200', "pending"),
+    ('Task114', 'This is Task114', '2025-01-28T15:36:56.200', "pending"),
+    ('Task121', 'This is Task121', '2025-01-28T15:36:56.200', "pending"),
+    ('Task122', 'This is Task122', '2025-01-28T15:36:56.200', "pending"),
+    ('Task123', 'This is Task123', '2025-01-28T15:36:56.200', "pending"),
+    ('Task131', 'This is Task131', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task132', 'This is Task132', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task133', 'This is Task133', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task141', 'This is Task141', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task142', 'This is Task142', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task143', 'This is Task143', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task211', 'This is Task211', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task212', 'This is Task212', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task213', 'This is Task213', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task221', 'This is Task221', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task222', 'This is Task222', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task223', 'This is Task223', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task231', 'This is Task231', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task232', 'This is Task232', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task233', 'This is Task233', '2025-01-28T15:36:56.200', "Demo");
+
+

@@ -1,0 +1,77 @@
+Good Things about sqlite3:
+"It's server less: "
+Meaning: no need to rent out space to access the server remotely, just get the ".db" files in the system and start using it
+
+
+
+1). installed sqllite3 on linux:
+sudo apt install sqlite3
+
+2). Created Sql Schema by using 
+2.1). Do "sqlite3" in terminal
+2.2). Do "taskManager.db"
+2.3). Do ".open taskManager.db"
+
+2.4). Run the following commands
+CREATE TABLE `tasks` (
+    Id INTEGER PRIMARY KEY,
+    Title varchar(255) NOT NULL, `Description` text, 
+    Created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+    Due_Date TEXT NOT NULL, 
+    Status varchar(255) 
+    )
+
+    INSERT INTO tasks(Title, Description, Due_Date, Status) VALUES
+    ('Task111', 'This is Task111', '2025-01-28T15:36:56.200', "pending"),
+    ('Task112', 'This is Task112', '2025-01-28T15:36:56.200', "pending"),
+    ('Task113', 'This is Task113', '2025-01-28T15:36:56.200', "pending"),
+    ('Task114', 'This is Task114', '2025-01-28T15:36:56.200', "pending"),
+    ('Task121', 'This is Task121', '2025-01-28T15:36:56.200', "pending"),
+    ('Task122', 'This is Task122', '2025-01-28T15:36:56.200', "pending"),
+    ('Task123', 'This is Task123', '2025-01-28T15:36:56.200', "pending"),
+    ('Task131', 'This is Task131', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task132', 'This is Task13The -u flag instructs get1', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task142', 'This is Task142', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task143', 'This is Task143', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task211', 'This is Task211', '2025-01-28T15:36:56.200', "In Progress"),
+    ('Task212', 'This is Task212', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task213', 'This is Task213', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task221', 'This is Task221', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task222', 'This is Task222', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task223', 'This is Task223', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task231', 'This is Task231', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task232', 'This is Task232', '2025-01-28T15:36:56.200', "Completed"),
+    ('Task233', 'This is Task233', '2025-01-28T15:36:56.200', "Demo");
+
+2.5) To view the table 
+use " SELECT * FROM tasks; " "".mode box"(optional)
+
+Now the database will be stored in some local home directory with the name of "taskManager.db"
+
+3). Now coming onto the golang part, install the golang using 
+"sudo snap install go --classic"
+
+3.1) Inititalize the go by using "go <file_name> init <directory_name>"
+i used go mod init /web-services-gin
+
+3.2) install the following libraries: 
+use [go get -u <url>] [here, the -u flag is for instructing "get" to use internet to update the dependencies]
+3.2.1 sqlite3: go install github.com/mattn/go-sqlite3
+3.2.2 Gin: go get -u github.com/gin-gonic/gin
+3.3 add the main.go file (this will be the entry point to the program)
+3.4 installing golang-golang-tools by using
+
+4). Working on router etc.
+ 4.1). Import <github.com/gin-gonic/gin> in your main.go file
+ 4.2). make a wrapper function of class gin in "r" variable 
+ 4.3). create router class by using "r" as Router := r.Group(<entry point of API>) 
+ 4.4). Created getTask, getAllTask, updateTask, deleteTask, addTask
+
+ 5). Inititalize the repo
+
+ 6). Creating functions that was declared in the router
+ 6.1). handler function for getting task will be:
+ 6.1.1). func getTask(c *gin.Context()){
+    c.JSON(<response code (200), gin.H{"message: ": "Task with the id is fetched"}>)
+ }
+ 6.2) Repeat the function of "6.1.1)" to make all the other handlers (getAllTask, deletePost, addPost, updaTask)

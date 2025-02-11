@@ -1,0 +1,73 @@
+package models
+
+import (
+	"fmt"
+	"slices"
+)
+
+// graph as map
+type graph struct {
+	gMap map[string][]string
+}
+
+// maintained queue for visited and adjacent nodes
+type queue struct {
+	visited []string
+	added   []string
+}
+
+// function to create empty graph
+func NewGraph() graph {
+	return graph{gMap: make(map[string][]string)}
+}
+
+// add an edge to the graph map
+func (g *graph) AddEdge(src, dest string) {
+	g.gMap[src] = append(g.gMap[src], dest)
+	g.gMap[dest] = append(g.gMap[dest], src)
+}
+
+// creates new queues based on total number of nodes in the graph, length = 0, capacity = number of nodes.
+func newQueue(size int) queue {
+	visited := make([]string, 0, size)
+	added := make([]string, 0, size)
+	q1 := queue{visited, added}
+	return q1
+}
+
+func enq(adj string, q *queue) {
+	// checking if the adjecent exists in added or visted list or not
+	if slices.Contains(q.added, adj) || slices.Contains(q.visited, adj) {
+
+	} else {
+		q.added = append(q.added, adj)
+	}
+}
+
+func dq(q *queue) string {
+	last := q.added[0]
+	fmt.Println("Visited: ", q.visited)
+	q.visited = append(q.visited, q.added[0])
+
+	fmt.Println("Adj: ", q.added)
+	q.added = q.added[1:]
+	return last
+}
+
+func BFS(src string, g *graph) queue {
+	gQ := newQueue(len(g.gMap))
+	fmt.Println(src)
+	enq(src, &gQ)
+	len := len(g.gMap)
+
+	for len > 0 {
+		for _, adj := range g.gMap[src] {
+			enq(adj, &gQ)
+		}
+		src = dq(&gQ)
+
+		len--
+	}
+
+	return gQ
+}

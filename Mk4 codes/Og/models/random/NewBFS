@@ -1,0 +1,58 @@
+package models
+
+import (
+	"fmt"
+	"slices"
+)
+
+// maintained queue for visited and adjacent nodes
+type queue struct {
+	visited []string
+	added   []string
+}
+
+// creates new queues based on total number of nodes in the graph, length = 0, capacity = number of nodes.
+func newQueue(size int) queue {
+	visited := make([]string, 0, size)
+	added := make([]string, 0, size)
+	q1 := queue{visited, added}
+	return q1
+}
+
+func enq(adj string, q *queue) {
+
+	if slices.Contains(q.added, adj) || slices.Contains(q.visited, adj) {
+	} else {
+		q.added = append(q.added, adj)
+	}
+}
+
+func dq(q *queue) string {
+	last := q.added[0]
+	fmt.Println("Visited: ", q.visited)
+	q.visited = append(q.visited, q.added[0])
+
+	fmt.Println("Adj: ", q.added)
+	q.added = q.added[1:]
+	return last
+}
+
+func BFS(src string, g *Graph) queue {
+	gQ := newQueue(len(g.gAdj))
+	fmt.Println(src)
+	enq(src, &gQ)
+	len := len(g.gAdj)
+	len2 := len
+	for len > 0 {
+		fmt.Println("Iteration: ", len2-len)
+		for key, adj := range g.gAdj {
+			fmt.Printf("Node: %T: %v Adj: %T: %v: \n", key, key, adj, adj)
+			enq(key, &gQ)
+		}
+		src = dq(&gQ)
+
+		len--
+	}
+
+	return gQ
+}

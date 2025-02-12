@@ -1,3 +1,84 @@
+import cv2
+import numpy as np
+from ultralytics import YOLO
+from sort import Sort  # Use modified SORT version
+
+# Load YOLOv8 Nano model
+model = YOLO("yolov8n.pt")
+
+# Initialize SORT Tracker
+tracker = Sort()
+
+# Input Video Path
+video_path = "input_video.mp4"  # Change this
+
+cap = cv2.VideoCapture(video_path)
+if not cap.isOpened():
+    print("Error: Could not open video.")
+    exit()
+
+# Get video properties
+frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+fps = int(cap.get(cv2.CAP_PROP_FPS))
+
+# Output Video Path
+output_video = "output_video.mp4"
+fourcc = cv2.VideoWriter_fourcc(*'mp4v') if output_video.endswith(".mp4") else cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter(output_video, fourcc, fps, (frame_width, frame_height))
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    # Run YOLOv8 object detection
+    results = model(frame)
+
+    detections = []
+    class_labels = {}  # Dictionary to store object labels
+
+    for result in results:
+        for box in result.boxes:
+            x1, y1, x2, y2 = map(int, box.xyxy[0])
+            conf = float(box.conf[0])
+            cls = int(box.cls[0])  # Class ID
+            
+            # Get class name
+            label = model.names[cls]  # e.g., 'person', 'car', 'dog'
+            
+            # Confidence threshold (adjustable)
+            if conf > 0.3:
+                detections.append([x1, y1, x2, y2, conf])
+                class_labels[(x1, y1, x2, y2)] = label  # Store label
+
+    detections = np.array(detections)
+
+    # Update SORT Tracker
+    tracked_objects = tracker.update(detections) if len(detections) > 0 else []
+
+    # Draw bounding boxes and labels
+    for obj in tracked_objects:
+        x1, y1, x2, y2, obj_id = map(int, obj)
+
+        # Find corresponding class label
+        label = class_labels.get((x1, y1, x2, y2), "Unknown")
+
+        # Draw bounding box
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+        # Display label above the object
+        text = f"{label} {obj_id}"
+        cv2.putText(frame, text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+    # Write frame to output video
+    out.write(frame)
+
+cap.release()
+out.release()
+cv2.destroyAllWindows()
+
+print(f"Processed video saved as {output_video}")
 !pip install ultralytics
 !wget https://raw.githubusercontent.com/abewley/sort/master/sort.py  # Download SORT without modifications
 

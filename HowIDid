@@ -1,3 +1,73 @@
+!pip install ultralytics
+!wget https://raw.githubusercontent.com/abewley/sort/master/sort.py  # Download SORT without modifications
+
+import cv2
+import torch
+import numpy as np
+from ultralytics import YOLO
+from sort import Sort  # Use modified SORT version
+
+# Load YOLOv8 Nano model
+model = YOLO("yolov8n.pt")
+
+# Initialize SORT Tracker
+tracker = Sort()
+
+# Input Video Path (Supports MP4 & AVI)
+video_path = "input_video.mp4"  # Change this
+
+cap = cv2.VideoCapture(video_path)
+if not cap.isOpened():
+    print("Error: Could not open video.")
+    exit()
+
+# Get video properties
+frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+fps = int(cap.get(cv2.CAP_PROP_FPS))
+
+# Output Video Path
+output_video = "output_video.mp4"
+
+# Select codec based on format
+fourcc = cv2.VideoWriter_fourcc(*'mp4v') if output_video.endswith(".mp4") else cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter(output_video, fourcc, fps, (frame_width, frame_height))
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    # Run YOLOv8 object detection
+    results = model(frame)
+
+    detections = []
+    for result in results:
+        for box in result.boxes:
+            x1, y1, x2, y2 = map(int, box.xyxy[0])
+            conf = float(box.conf[0])
+            if conf > 0.3:
+                detections.append([x1, y1, x2, y2, conf])
+    
+    detections = np.array(detections)
+
+    # Update SORT Tracker
+    tracked_objects = tracker.update(detections) if len(detections) > 0 else []
+
+    # Draw bounding boxes and IDs
+    for obj in tracked_objects:
+        x1, y1, x2, y2, obj_id = map(int, obj)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.putText(frame, f'ID {obj_id}', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+    # Write frame to output video
+    out.write(frame)
+
+cap.release()
+out.release()
+cv2.destroyAllWindows()
+
+print(f"Processed video saved as {output_video}")
 Good Things about sqlite3:
 "It's server less: "
 Meaning: no need to rent out space to access the server remotely, just get the ".db" files in the system and start using it
